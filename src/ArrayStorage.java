@@ -1,59 +1,56 @@
+import java.util.Arrays;
+
 /**
  * Array based storage for Resumes
  */
+
 public class ArrayStorage {
     Resume[] storage = new Resume[10000];
-    int searchIndex = 0, maxi = 0;
+    private int size=0;
 
     void clear() {
         for (int i=0; i<size(); i++)
             storage[i] = null;
+        size=0;
     }
 
     void save(Resume resume) {
-        storage[size()] = resume;
+        storage[size] = resume;
+        size++;
     }
 
     Resume get(String uuid) {
-        Resume resume = null;
-        for (int i = 0; i < size(); i++) {
-            if (storage[i].uuid == uuid)
-                resume = storage[i];
+        for (int i = 0; i < size; i++) {
+            if (storage[i].uuid.equals(uuid))
+                return storage[i];
         }
-        return resume;
+        return null;
     }
 
     void delete(String uuid) {
-        maxi = size();
-        for (int i = 0; i < maxi; i++)
-            if (storage[i].uuid == uuid) {
-                searchIndex = i;
-                break;
+        int i=0;
+        while ((i < size)&&(!storage[i].uuid.equals(uuid)))
+            i++;
+        if (i < size) {
+            while (i < size) {
+                storage[i] = storage[i + 1];
+                i++;
             }
-        for (int i = searchIndex; i < maxi; i++)
-            storage[i] = storage[i + 1];
-        storage[maxi] = null;
+            storage[size] = null;
+            size--;
+        }
     }
 
     /**
      * @return array, contains only Resumes in storage (without null)
      */
     Resume[] getAll() {
-        maxi = size();
-        Resume resume[] = new Resume[maxi];
-        for (int i = 0; i < maxi; i++)
-            resume[i] = storage[i];
-        return resume;
+        if (size > 0) return Arrays.copyOf(storage, size);
+        return new Resume[0];
     }
 
     int size() {
-        searchIndex = 0;
-        for (int i = 0; i < storage.length; i++)
-            if (storage[i] == null) {
-                searchIndex = i;
-                break;
-            }
-        return (searchIndex);
+        return size;
     }
 }
 
